@@ -1,0 +1,165 @@
+version: "3.0"
+
+services:
+  reverse-proxy:
+    image: traefik:v2.1.3
+    command:
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --providers.docker=true
+      - --certificatesResolvers.le.acme.httpChallenge.entryPoint=web
+      - --certificatesresolvers.le.acme.email=scs-it@unisg.ch
+      - --certificatesresolvers.le.acme.storage=/acme.json
+      - --providers.docker.exposedByDefault=false
+      - --serversTransport.insecureSkipVerify=true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/ubuntu/acme.json:/acme.json
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+  
+  app:
+    image: openjdk
+    command: "java -jar /data/app-0.0.1.jar"
+    restart: unless-stopped
+    volumes:
+      - ./:/data/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(`app.${PUB_IP}.asse.scs.unisg.ch`)"
+      - "traefik.http.routers.app.service=app"
+      - "traefik.http.services.app.loadbalancer.server.port=8080"
+      - "traefik.http.routers.app.tls=true"
+      - "traefik.http.routers.app.entryPoints=web,websecure"
+      - "traefik.http.routers.app.tls.certresolver=le"
+
+  tapas-tasks:
+    image: openjdk
+    command: "java -jar /data/tapas-tasks-0.0.1.jar"
+    restart: unless-stopped
+    volumes:
+      - ./:/data/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tapas-tasks.rule=Host(`tapas-tasks.${PUB_IP}.asse.scs.unisg.ch`)"
+      - "traefik.http.routers.tapas-tasks.service=tapas-tasks"
+      - "traefik.http.services.tapas-tasks.loadbalancer.server.port=8081"
+      - "traefik.http.routers.tapas-tasks.tls=true"
+      - "traefik.http.routers.tapas-tasks.entryPoints=web,websecure"
+      - "traefik.http.routers.tapas-tasks.tls.certresolver=le"
+
+  tapas-roster:
+    image: openjdk
+    command: "java -jar /data/tapas-roster-0.0.1.jar"
+    restart: unless-stopped
+    volumes:
+      - ./:/data/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tapas-roster.rule=Host(`tapas-roster.${PUB_IP}.asse.scs.unisg.ch`)"
+      - "traefik.http.routers.tapas-roster.service=tapas-roster"
+      - "traefik.http.services.tapas-roster.loadbalancer.server.port=8083"
+      - "traefik.http.routers.tapas-roster.tls=true"
+      - "traefik.http.routers.tapas-roster.entryPoints=web,websecure"
+      - "traefik.http.routers.tapas-roster.tls.certresolver=le"
+
+  tapas-executor-pool:
+    image: openjdk
+    command: "java -jar /data/tapas-executor-pool-0.0.1.jar"
+    restart: unless-stopped
+    volumes:
+      - ./:/data/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tapas-executor-pool.rule=Host(`tapas-executor-pool.${PUB_IP}.asse.scs.unisg.ch`)"
+      - "traefik.http.routers.tapas-executor-pool.service=tapas-executor-pool"
+      - "traefik.http.services.tapas-executor-pool.loadbalancer.server.port=8082"
+      - "traefik.http.routers.tapas-executor-pool.tls=true"
+      - "traefik.http.routers.tapas-executor-pool.entryPoints=web,websecure"
+      - "traefik.http.routers.tapas-executor-pool.tls.certresolver=le"
+      
+  tapas-executor-calculator:
+    image: openjdk
+    command: "java -jar /data/tapas-executor-calculator-0.0.1.jar"
+    restart: unless-stopped
+    volumes:
+      - ./:/data/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tapas-executor-calculator.rule=Host(`tapas-executor-calculator.${PUB_IP}.asse.scs.unisg.ch`)"
+      - "traefik.http.routers.tapas-executor-calculator.service=tapas-executor-calculator"
+      - "traefik.http.services.tapas-executor-calculator.loadbalancer.server.port=8084"
+      - "traefik.http.routers.tapas-executor-calculator.tls=true"
+      - "traefik.http.routers.tapas-executor-calculator.entryPoints=web,websecure"
+      - "traefik.http.routers.tapas-executor-calculator.tls.certresolver=le"
+
+  tapas-executor-chatgpt:
+    image: openjdk
+    command: "java -jar /data/tapas-executor-chatgpt-0.0.1.jar"
+    restart: unless-stopped
+    volumes:
+      - ./:/data/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tapas-executor-chatgpt.rule=Host(`tapas-executor-chatgpt.${PUB_IP}.asse.scs.unisg.ch`)"
+      - "traefik.http.routers.tapas-executor-chatgpt.service=tapas-executor-chatgpt"
+      - "traefik.http.services.tapas-executor-chatgpt.loadbalancer.server.port=8085"
+      - "traefik.http.routers.tapas-executor-chatgpt.tls=true"
+      - "traefik.http.routers.tapas-executor-chatgpt.entryPoints=web,websecure"
+      - "traefik.http.routers.tapas-executor-chatgpt.tls.certresolver=le"
+
+  tapas-auction-house:
+    image: openjdk
+    command: "java -jar /data/tapas-auction-house-0.0.1.jar"
+    restart: unless-stopped
+    volumes:
+      - ./:/data/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tapas-auction-house.rule=Host(`tapas-auction-house.${PUB_IP}.asse.scs.unisg.ch`)"
+      - "traefik.http.routers.tapas-auction-house.service=tapas-auction-house"
+      - "traefik.http.services.tapas-auction-house.loadbalancer.server.port=8090"
+      - "traefik.http.routers.tapas-auction-house.tls=true"
+      - "traefik.http.routers.tapas-auction-house.entryPoints=web,websecure"
+      - "traefik.http.routers.tapas-auction-house.tls.certresolver=le"
+      
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 8nP7s0a    # Can not be changed again later on
+    volumes:
+      - database:/data/db
+
+  dbadmin:
+    image: mongo-express
+    container_name: dbadmin
+    restart: unless-stopped
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: student    # Access to web interface: username
+      ME_CONFIG_BASICAUTH_PASSWORD: studious   # Access to web interface: password
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: 8nP7s0a  # must correspond to the db
+      ME_CONFIG_MONGODB_PORT: 27017 # Default 27017
+      ME_CONFIG_MONGODB_SERVER: mongodb
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dbadmin.rule=Host(`dbadmin.${PUB_IP}.asse.scs.unisg.ch`)"
+      - "traefik.http.routers.dbadmin.service=dbadmin"
+      - "traefik.http.services.dbadmin.loadbalancer.server.port=8081"
+      - "traefik.http.routers.dbadmin.tls=true"
+      - "traefik.http.routers.dbadmin.entryPoints=web,websecure"
+      - "traefik.http.routers.dbadmin.tls.certresolver=le"
+
+volumes:
+  database:

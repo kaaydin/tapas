@@ -1,0 +1,15 @@
+# Dockerfile/Docker-Compose file based on an initial version authored by Alexander Lontke (ASSE, Fall Semester 2021)
+
+FROM maven as build
+
+COPY . /app
+
+RUN mvn -f app/pom.xml --batch-mode --update-snapshots verify -DskipTests
+
+FROM openjdk
+
+COPY --from=build /app/target/tapas-auction-house-0.0.1.jar ./tapas-auction-house-0.0.1.jar
+
+COPY --from=build /app/src/main/resources/application-local.properties ./application-local.properties
+
+CMD java -jar tapas-auction-house-0.0.1.jar --spring.config.location=application-local.properties

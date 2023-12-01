@@ -1,0 +1,129 @@
+# Dockerfile/Docker-Compose file based on an initial version authored by Alexander Lontke (ASSE, Fall Semester 2021)
+
+version: "3.7"
+
+services:
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    # Use environment variables instead of application.properties
+    environment:
+      - KEY=VALUE
+      #- JAVA_TOOL_OPTIONS=-ea -Dspring.profiles.active=local-mongo,chaos-monkey
+    ports: #Just needed when testing from outside the docker network
+      - "8080:8080"
+    networks:
+      - tapas-network
+
+  tapas-tasks:
+    build:
+      context: ./tapas-tasks
+      dockerfile: Dockerfile-local
+    # Use environment variables instead of application.properties
+    environment:
+      - KEY=VALUE
+      #- JAVA_TOOL_OPTIONS=-ea -Dspring.profiles.active=local-mongo,chaos-monkey
+    ports: #Just needed when testing from outside
+      - "8081:8081"
+    networks:
+      - tapas-network
+
+  tapas-executor-pool:
+    build:
+      context: ./tapas-executor-pool
+      dockerfile: Dockerfile-local
+    # Use environment variables instead of application.properties
+    environment:
+      - KEY=VALUE
+      #- JAVA_TOOL_OPTIONS=-ea -Dspring.profiles.active=local-mongo,chaos-monkey
+    ports: #Just needed when testing from outside
+      - "8082:8082"
+    networks:
+      - tapas-network
+
+  tapas-roster:
+    build:
+      context: ./tapas-roster
+      dockerfile: Dockerfile-local
+    # Use environment variables instead of application.properties
+    environment:
+      - KEY=VALUE
+      #- JAVA_TOOL_OPTIONS=-ea -Dspring.profiles.active=local-mongo,chaos-monkey
+    ports: #Just needed when testing from outside
+      - "8083:8083"
+    networks:
+      - tapas-network
+
+  tapas-executor-calculator:
+    build:
+      context: ./tapas-executor-calculator
+      dockerfile: Dockerfile-local
+    # Use environment variables instead of application.properties
+    environment:
+      - KEY=VALUE
+      #- JAVA_TOOL_OPTIONS=-ea -Dspring.profiles.active=local-mongo,chaos-monkey
+    ports: #Just needed when testing from outside
+      - "8084:8084"
+    networks:
+      - tapas-network
+
+  tapas-executor-chatgpt:
+    build:
+      context: ./tapas-executor-chatgpt
+      dockerfile: Dockerfile-local
+    # Use environment variables instead of application.properties
+    environment:
+      - KEY=VALUE
+    ports: #Just needed when testing from outside
+      - "8085:8085"
+    networks:
+      - tapas-network
+
+  tapas-auction-house:
+    build:
+      context: ./tapas-auction-house
+      dockerfile: Dockerfile-local
+    # Use environment variables instead of application.properties
+    environment:
+      - KEY=VALUE
+    ports: #Just needed when testing from outside
+      - "8090:8090"
+    networks:
+      - tapas-network
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 8nP7s0a    # Can not be changed again later on
+    volumes:
+      - database:/data/db
+    networks:
+      - tapas-network
+
+  dbadmin:
+    image: mongo-express
+    container_name: dbadmin
+    restart: unless-stopped
+    ports:
+      - "8089:8081"
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: student    # Access to web interface: username
+      ME_CONFIG_BASICAUTH_PASSWORD: studious   # Access to web interface: password
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: 8nP7s0a  # must correspond to the db
+      ME_CONFIG_MONGODB_PORT: 27017 # Default 27017
+      ME_CONFIG_MONGODB_SERVER: mongodb
+    networks:
+      - tapas-network
+
+#Volume for mongodb. One per server.
+volumes:
+  database:
+
+networks:
+  tapas-network:
+    driver: bridge
