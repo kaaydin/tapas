@@ -1,6 +1,24 @@
 # tapas-f23-group-5
 
-The repository for the TAPAS application developed by ASSE group 5
+## Quick-Start Guide
+1. Deploy all micro-services locally or on the VM (via Docker)
+2. Send a POST request to the executor-pool micro-service to register executors (more detailed information on how to do that in the README)
+    1. For Calculator: Use “CALCULATING” as “executorType” and “http://tapas-executor-calculator:8084/” as “executorBaseUri” 
+    2. For ChatGPT: Use “PROMPTING” as “executorType” and “http://tapas-executor-chatgpt:8085/” as “executorBaseUri”
+    3. For Cherrybot: Use “CHERRYBOT” as “executorType” and “http://tapas-executor-cherrybot:8086/” as “executorBaseUri” 
+    4. For Mirocard: Use “MIROCARD” as “executorType” and “http://tapas-executor-chatgpt:8087/” as “executorBaseUri
+    5. For MasonsManifesto: Use "MASON" as executorType and "http://tapas-executor-masonsmanifesto:8088/” as "executorBaseUri"
+3. Send a POST request to the tapas-tasks micro-service with your input (more detailed information on how to do that in the README)
+    1. For the Calculator: You can set simple mathematical operations as task input (e.g., “5+5”)
+    2. For the ChatGPT: You can set simple coding questions as task input (e.g., “What is ChaosMonkey?”)
+    4. For the Cherrybot: You can set an action and payload based on the Thing Description as task input (e.g., “"{\"action\": \"initialize\",\"payload\": {}}”)
+    6. For the Mirocard: You can set the sensor data as task input (e.g., “humidity”)
+    7. For the Masons Manifesto: No inputData needed
+    8. For an external executor: You need to set an executorType and task input that aligns with the external executor. Make sure that both auction houses communicate over the same protocol (either WebSub or MQTT).
+
+Once the POST request has been sent to tapas-tasks micro-service, the requests gets sent to the the roster. The roster automatically (1) assigns the task to an existing executor and (2) sends the task location to the respective executor. The executor retrieves the task input, executes the task and sends the updates to the task list. In case the roster cannot find an executor that is able to execute the task, the task is sent from the roster to the auction house where the task is auctioned off to other auction houses that can bid on the auction. The task is sent to the external auction house with the winning bid, where the task is assigned and executed by the external executor. The external executor then updates the task in the task list.
+
+The task output can be retrieved by sending a GET request to the task location (i.e., the task URI).
 
 ## Project Structure
 This project is structured as follows:
@@ -31,6 +49,24 @@ This project is structured as follows:
     * [tapas-executor-chatgpt/src](tapas-executor-chatgpt/src): source code of the project (following the Hexagonal Architecture)
     * [tapas-executor-chatgpt/pom.xml](tapas-executor-chatgpt/pom.xml): Maven pom-file
     * PORT 8085
+* [tapas-executor-cherrybot](tapas-executor-cherrybot): standalone project for the tapas-executor-cherrybot micro-service (Spring Boot project) 
+    * [tapas-executor-cherrybot/README.md](tapas-executor-cherrybot/README.md): README file for the tapas-executor-cherrybot service with more details.
+    * [tapas-executor-cherrybot/src](tapas-executor-cherrybot/src): source code of the project (following the Hexagonal Architecture)
+    * [tapas-executor-cherrybot/pom.xml](tapas-executor-cherrybot/pom.xml): Maven pom-file
+    * PORT 8086
+* [tapas-executor-mirocard](tapas-executor-mirocard): standalone project for the tapas-executor-mirocard micro-service (Spring Boot project) 
+    * [tapas-executor-mirocard/README.md](tapas-executor-mirocard/README.md): README file for the tapas-executor-mirocard service with more details.
+    * [tapas-executor-mirocard/src](tapas-executor-mirocard/src): source code of the project (following the Hexagonal Architecture)
+    * [tapas-executor-mirocard/pom.xml](tapas-executor-mirocard/pom.xml): Maven pom-file
+    * PORT 8087
+* [tapas-executor-masonsmanifesto](tapas-executor-masonsmanifesto): standalone project for the tapas-executor-masonsmanifesto micro-service (Spring Boot project) 
+    * [tapas-executor-masonsmanifesto/README.md](tapas-executor-masonsmanifesto/README.md): README file for the tapas-executor-masonsmanifesto service with more details.
+    * [tapas-executor-masonsmanifesto/src](tapas-executor-masonsmanifesto/src): source code of the project (following the Hexagonal Architecture)
+    * [tapas-executor-masonsmanifesto/pom.xml](tapas-executor-masonsmanifesto/pom.xml): Maven pom-file
+    * PORT 8088
+
+
+
 * [docker-compose.yml](docker-compose.yml): Docker Compose configuration file for all services
 * [docker-compose-local.yml](docker-compose-local.yml): Docker Compose configuration file to run all services on local Docker
 * [.github/workflows/build-and-deploy.yml](.github/workflows/build-and-deploy.yml): GitHub actions script (CI/CD workflow)

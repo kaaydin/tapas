@@ -4,6 +4,8 @@ import ch.unisg.tapastasks.tasks.application.port.out.NewTaskAddedEvent;
 import ch.unisg.tapastasks.tasks.application.port.out.NewTaskAddedEventPort;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
@@ -20,6 +22,7 @@ import java.net.http.HttpResponse;
 @Component
 @Primary
 public class PublishNewTaskAddedEventWebAdapter implements NewTaskAddedEventPort {
+    private static final Logger LOGGER = LogManager.getLogger(PublishNewTaskAddedEventWebAdapter.class);
 
     @Autowired
     private Environment environment;
@@ -30,7 +33,7 @@ public class PublishNewTaskAddedEventWebAdapter implements NewTaskAddedEventPort
     public void publishNewTaskAddedEvent(NewTaskAddedEvent event) {
 
         //Here we would need to work with DTOs in case the payload of calls becomes more complex
-        System.out.println("Publishing new Task Added Event with id + " + event.taskId.getValue());
+        LOGGER.info("Publishing new Task Added Event with id + " + event.taskId.getValue());
         var values = new HashMap<String, String>() {{
             put("taskLocation",environment.getProperty("baseuri")+"tasks/"+event.taskId.getValue());
             put("taskListName",event.taskListName.getValue());
@@ -45,7 +48,7 @@ public class PublishNewTaskAddedEventWebAdapter implements NewTaskAddedEventPort
             e.printStackTrace();
         }
 
-        System.out.println(requestBody);
+        LOGGER.info(requestBody);
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -56,7 +59,7 @@ public class PublishNewTaskAddedEventWebAdapter implements NewTaskAddedEventPort
 
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
+            LOGGER.info(response.body());
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }

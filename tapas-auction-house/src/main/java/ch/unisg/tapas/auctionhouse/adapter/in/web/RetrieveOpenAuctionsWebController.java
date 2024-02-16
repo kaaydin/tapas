@@ -57,6 +57,31 @@ public class RetrieveOpenAuctionsWebController {
         responseHeaders.add(HttpHeaders.CONTENT_TYPE, "application/json");
         responseHeaders.add(HttpHeaders.LINK, "<" + config.getWebSubHub() + ">; rel=\"hub\"");
         responseHeaders.add(HttpHeaders.LINK, "<" + config.getAuctionHouseUri() + "auctions/>; rel=\"self\"");
+        responseHeaders.add(HttpHeaders.LINK, "<" + config.getAuctionHouseUri() + "auctions/>; types=\"" + config.getDiscoverySelfTopics() + "\"");
+        responseHeaders.add(HttpHeaders.LINK, "<" + config.getDiscoveryNextUri() + ">; types=\"" + config.getDiscoveryNextTopics() + "\"");
+
+
+        return new ResponseEntity<>(array.toString(), responseHeaders, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/discover/")
+    public ResponseEntity<String> discoverAuctions() {
+        Collection<Auction> auctions =
+            retrieveAuctionListUseCase.retrieveAuctions(new RetrieveOpenAuctionsQuery());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode array = mapper.createArrayNode();
+
+        for (Auction auction : auctions) {
+            AuctionJsonRepresentation representation = new AuctionJsonRepresentation(auction);
+            JsonNode node = mapper.valueToTree(representation);
+            array.add(node);
+        }
+
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.add(HttpHeaders.CONTENT_TYPE, "application/json");
+        responseHeaders.add(HttpHeaders.LINK, "<" + config.getAuctionHouseUri() + "discover/>; types=\"" + config.getDiscoverySelfTopics() + "\"");
+        responseHeaders.add(HttpHeaders.LINK, "<" + config.getDiscoveryNextUri() + ">; types=\"" + config.getDiscoveryNextTopics() + "\"");
 
         return new ResponseEntity<>(array.toString(), responseHeaders, HttpStatus.OK);
     }

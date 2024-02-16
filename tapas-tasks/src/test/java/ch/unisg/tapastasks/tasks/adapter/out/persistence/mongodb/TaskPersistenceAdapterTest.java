@@ -58,7 +58,7 @@ public class TaskPersistenceAdapterTest {
     }
 
     @Test
-    void retrievesTask() {
+    void retrievesTask() throws TaskNotFoundError {
 
         String testTaskId = UUID.randomUUID().toString();
         String testTaskName = "reads-persistence-task-name";
@@ -74,15 +74,12 @@ public class TaskPersistenceAdapterTest {
             testTaskType, testTaskInput, testTaskOutput, testTaskStatus, testTaskServiceProvider, testTaskListName);
         taskRepository.insert(mongoTask);
 
-        try {
+
         Task retrievedTask = adapterUnderTest.loadTask(new Task.TaskId(testTaskId),
             new TaskList.TaskListName(testTaskListName));
             assertThat(retrievedTask.getTaskName().getValue()).isEqualTo(testTaskName);
             assertThat(retrievedTask.getTaskId().getValue()).isEqualTo(testTaskId);
             assertThat(retrievedTask.getTaskStatus().getValue()).isEqualTo(Task.Status.valueOf(testTaskStatus));
-        } catch (TaskNotFoundError e) {
-           System.out.println(e);
-        }
     }
 
 }

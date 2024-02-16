@@ -1,8 +1,6 @@
 package ch.unisg.tapasroster.roster.domain;
 
 import lombok.Getter;
-import lombok.Setter;
-
 import java.util.UUID;
 
 public class TaskAssignment {
@@ -15,7 +13,6 @@ public class TaskAssignment {
 
     @Getter
     private final String taskLocation;
-
 
     public TaskAssignment(UUID taskAssignmentId, ExecutorBaseUri executorBaseUri, String taskLocation) {
         this.taskAssignmentId = taskAssignmentId;

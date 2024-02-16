@@ -23,22 +23,32 @@ public class RetrieveExecutorsByTypeWebController {
 
     @GetMapping(path = "/executors/type/{executorType}")
     public ResponseEntity<String> retrieveExecutors(@PathVariable("executorType") String executorType) {
+        if (executorType == null || executorType.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Executor type is required");
+        }
         RetrieveExecutorsByTypeQuery query = new RetrieveExecutorsByTypeQuery(executorType);
+        List<String> executors;
 
-        List<String> executors = retrieveExecutorsByTypeUseCase
-                .retrieveExecutorsByType(query)
-                .stream()
-                .map(executor -> {
-                    try {
-                        return ExistingExecutorJsonRepresentation.serialize(executor);
-                    } catch (JsonProcessingException e) {
-                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-                    }
-                })
-                .toList();
-
-        if (executors.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        try{
+            executors = retrieveExecutorsByTypeUseCase
+                    .retrieveExecutorsByType(query)
+                    .stream()
+                    .map(executor -> {
+                        try {
+                            return ExistingExecutorJsonRepresentation.serialize(executor);
+                        } catch (JsonProcessingException e) {
+                            // This will get caught by the outer catch block
+                            throw new RuntimeException("JSON processing error", e);
+                        }
+                    })
+                    .toList();
+        } catch (RuntimeException e) {
+            // If the cause is JsonProcessingException, handle it appropriately
+            if (e.getCause() instanceof JsonProcessingException) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error processing JSON: " + e.getCause().getMessage());
+            } else {
+                throw e; // Re-throw if it's not a JsonProcessingException
+            }
         }
 
         HttpHeaders responseHeaders = new HttpHeaders();

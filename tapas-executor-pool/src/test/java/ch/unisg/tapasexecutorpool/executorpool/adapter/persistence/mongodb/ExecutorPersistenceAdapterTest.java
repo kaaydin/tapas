@@ -16,7 +16,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +31,7 @@ public class ExecutorPersistenceAdapterTest {
     private ExecutorPersistenceAdapter adapterUnderTest;
 
     @Test
-    void addsNewExecutor() throws Exception {
+    void addsNewExecutor() {
 
         String testExecutorId = UUID.randomUUID().toString();
         String testExecutorName = "test-name";
@@ -63,7 +62,7 @@ public class ExecutorPersistenceAdapterTest {
     }
 
     @Test
-    void retrievesExecutor() {
+    void retrievesExecutor() throws ExecutorNotFoundError {
 
         String testExecutorId = UUID.randomUUID().toString();
         String testExecutorName = "reads-persistence-executor-name";
@@ -75,16 +74,11 @@ public class ExecutorPersistenceAdapterTest {
 
         executorRepository.insert(mongoExecutor);
 
-        try {
-        //Executor retrievedExecutor = adapterUnderTest.loadExecutor(new Executor(testExecutorId));
-            Executor retrievedExecutor = adapterUnderTest.loadExecutor(testExecutorId);
-            assertThat(retrievedExecutor.getExecutorId()).isEqualTo(testExecutorId);
-            assertThat(retrievedExecutor.getExecutorName()).isEqualTo(testExecutorName);
-            assertThat(retrievedExecutor.getExecutorType()).isEqualTo(testExecutorType);
-            assertThat(retrievedExecutor.getExecutorBaseUri()).isEqualTo(testExecutorBaseUri);
-        } catch (ExecutorNotFoundError e) {
-           System.out.println(e);
-        }
+        Executor retrievedExecutor = adapterUnderTest.loadExecutor(testExecutorId);
+        assertThat(retrievedExecutor.getExecutorId()).isEqualTo(testExecutorId);
+        assertThat(retrievedExecutor.getExecutorName()).isEqualTo(testExecutorName);
+        assertThat(retrievedExecutor.getExecutorType()).isEqualTo(testExecutorType);
+        assertThat(retrievedExecutor.getExecutorBaseUri()).isEqualTo(testExecutorBaseUri);
     }
 
 }

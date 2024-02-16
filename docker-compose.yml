@@ -85,7 +85,7 @@ services:
       - "traefik.http.routers.tapas-executor-pool.tls=true"
       - "traefik.http.routers.tapas-executor-pool.entryPoints=web,websecure"
       - "traefik.http.routers.tapas-executor-pool.tls.certresolver=le"
-      
+
   tapas-executor-calculator:
     image: openjdk
     command: "java -jar /data/tapas-executor-calculator-0.0.1.jar"
@@ -116,6 +116,51 @@ services:
       - "traefik.http.routers.tapas-executor-chatgpt.entryPoints=web,websecure"
       - "traefik.http.routers.tapas-executor-chatgpt.tls.certresolver=le"
 
+  tapas-executor-cherrybot:
+    image: openjdk
+    command: "java -jar /data/tapas-executor-cherrybot-0.0.1.jar"
+    restart: unless-stopped
+    volumes:
+      - ./:/data/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tapas-executor-cherrybot.rule=Host(`tapas-executor-cherrybot.${PUB_IP}.asse.scs.unisg.ch`)"
+      - "traefik.http.routers.tapas-executor-cherrybot.service=tapas-executor-cherrybot"
+      - "traefik.http.services.tapas-executor-cherrybot.loadbalancer.server.port=8086"
+      - "traefik.http.routers.tapas-executor-cherrybot.tls=true"
+      - "traefik.http.routers.tapas-executor-cherrybot.entryPoints=web,websecure"
+      - "traefik.http.routers.tapas-executor-cherrybot.tls.certresolver=le"
+
+  tapas-executor-mirocard:
+    image: openjdk
+    command: "java -jar /data/tapas-executor-mirocard-0.0.1.jar"
+    restart: unless-stopped
+    volumes:
+      - ./:/data/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tapas-executor-mirocard.rule=Host(`tapas-executor-mirocard.${PUB_IP}.asse.scs.unisg.ch`)"
+      - "traefik.http.routers.tapas-executor-mirocard.service=tapas-executor-mirocard"
+      - "traefik.http.services.tapas-executor-mirocard.loadbalancer.server.port=8087"
+      - "traefik.http.routers.tapas-executor-mirocard.tls=true"
+      - "traefik.http.routers.tapas-executor-mirocard.entryPoints=web,websecure"
+      - "traefik.http.routers.tapas-executor-mirocard.tls.certresolver=le"
+
+  tapas-executor-masonsmanifesto:
+    image: openjdk
+    command: "java -jar /data/tapas-executor-masonsmanifesto-0.0.1.jar"
+    restart: unless-stopped
+    volumes:
+      - ./:/data/
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tapas-executor-masonsmanifesto.rule=Host(`tapas-executor-masonsmanifesto.${PUB_IP}.asse.scs.unisg.ch`)"
+      - "traefik.http.routers.tapas-executor-masonsmanifesto.service=tapas-executor-masonsmanifesto"
+      - "traefik.http.services.tapas-executor-masonsmanifesto.loadbalancer.server.port=8088"
+      - "traefik.http.routers.tapas-executor-masonsmanifesto.tls=true"
+      - "traefik.http.routers.tapas-executor-masonsmanifesto.entryPoints=web,websecure"
+      - "traefik.http.routers.tapas-executor-masonsmanifesto.tls.certresolver=le"
+
   tapas-auction-house:
     image: openjdk
     command: "java -jar /data/tapas-auction-house-0.0.1.jar"
@@ -130,7 +175,7 @@ services:
       - "traefik.http.routers.tapas-auction-house.tls=true"
       - "traefik.http.routers.tapas-auction-house.entryPoints=web,websecure"
       - "traefik.http.routers.tapas-auction-house.tls.certresolver=le"
-      
+
   mongodb:
     image: mongo
     container_name: mongodb

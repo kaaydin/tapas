@@ -22,17 +22,19 @@ public class StartExecutorWebAdapter implements StartExecutorPort {
     }
 
     @Override
-    public void startExecutor(ExecutorBaseUri executorBaseUri, String taskLocation) {
+    public String startExecutor(ExecutorBaseUri executorBaseUri, String taskLocation) {
 
         String body = "{\"taskLocation\":\""+ taskLocation +"\"}";
 
-        WebClient.create()
+        return WebClient.create()
                 .post()
-                .uri(executorBaseUri.getBaseUri() + "/execute")
+                .uri(executorBaseUri.getBaseUri() + "execute")
                 .contentType(MediaType.valueOf(TaskJsonRepresentation.MEDIA_TYPE))
                 .bodyValue(body)
                 .retrieve()
                 .bodyToMono(String.class)
+                .doOnSuccess(response -> LOG.info("Invoked task execution for task at %s" + taskLocation))
+                .doOnError(err -> LOG.severe(String.format("Invoking task execution for task at %s failed with the following reason: " + taskLocation, err.getMessage())))
                 .block();
     }
 }

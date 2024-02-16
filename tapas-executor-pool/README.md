@@ -32,8 +32,8 @@ curl -i --location --request POST 'http://localhost:8082/executors/' \
 --data-raw '{
   "executorName" : "Executor1",
   "executorType" : "CALCULATING",
-  "executorBaseUri" : "http://tapas-executor-calculator:8084"
-}
+  "executorBaseUri" : "http://tapas-executor-calculator:8084/"
+}'
 
 HTTP/1.1 201
 Location: http://localhost:8082/executors/f8c7a7b4-d839-42b3-a6b6-387f2c974c93
@@ -61,7 +61,7 @@ Date: Sun, 17 Oct 2021 21:07:04 GMT
 {
   "executorName" : "Executor1",
   "executorType" : "CALCULATING",
-  "executorBaseUri" : "http://tapas-executor-calculator:8084"
+  "executorBaseUri" : "http://tapas-executor-calculator:8084/"
 }
 
 ### Retrieving executors by type
@@ -81,7 +81,7 @@ Date: Sun, 17 Oct 2021 21:07:04 GMT
   {
     "executorName" : "Executor1",
     "executorType" : "CALCULATING",
-    "executorBaseUri" : "http://tapas-executor-calculator:8084"
+    "executorBaseUri" : "http://tapas-executor-calculator:8084/"
   }
 ]
 ```

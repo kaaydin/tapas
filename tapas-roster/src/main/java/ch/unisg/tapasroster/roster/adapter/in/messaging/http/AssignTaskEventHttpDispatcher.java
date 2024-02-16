@@ -7,11 +7,9 @@ import ch.unisg.tapasroster.roster.application.port.in.AssignTaskEventHandler;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.util.Optional;
@@ -37,15 +35,14 @@ public class AssignTaskEventHttpDispatcher {
             @ApiResponse(responseCode = "500", description = "Task assignment could not be created."),
     })
     @PostMapping(path = "/roster/newtask/", consumes = {TaskJsonRepresentation.MEDIA_TYPE})
-    public TaskAssignment dispatchAssignTaskEvents(@RequestBody @Valid TaskJsonRepresentation payload) {
+    public Optional<TaskAssignment> dispatchAssignTaskEvents(@RequestBody @Valid TaskJsonRepresentation payload) {
         AssignTaskEvent event = new AssignTaskEvent(
                 payload.getTaskLocation(),
                 payload.getTaskListName(),
                 payload.getTaskType()
         );
 
-        return assignTaskEventHandler.assignTaskToExecutor(event);
-
+        return Optional.ofNullable(assignTaskEventHandler.assignTaskToExecutor(event));
     }
 }
 

@@ -26,7 +26,7 @@ curl -i --location --request POST 'http://localhost:8083/roster/newtask/' \
   "taskLocation" : "http://tapas-tasks:8081/tasks/${taskId}",
   "taskType" : "CALCULATING",
   "taskNameList" : "whatever"
-}
+}'
 
 Response:
 HTTP/1.1 200

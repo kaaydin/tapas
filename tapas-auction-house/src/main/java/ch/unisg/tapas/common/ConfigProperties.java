@@ -45,8 +45,8 @@ public class ConfigProperties {
      *
      * @return the URI of the Peer Auction House Feed
      */
-    public URI getDiscoveryPeerUri() {
-        return URI.create(environment.getProperty("discovery.peer.uri"));
+    public URI getDiscoveryNextUri() {
+        return URI.create(environment.getProperty("discovery.other.uri"));
     }
 
     /**
@@ -54,8 +54,8 @@ public class ConfigProperties {
      *
      * @return the topic of auctions advertised by the peer
      */
-    public String getDiscoveryPeerTopic() {
-        return environment.getProperty("discovery.peer.topic");
+    public String getDiscoveryNextTopics() {
+        return environment.getProperty("discovery.other.topics");
     }
 
     /**
@@ -63,8 +63,8 @@ public class ConfigProperties {
      *
      * @return the topic of our own auction feed
      */
-    public String getDiscoverySelfTopic() {
-        return environment.getProperty("discovery.self.topic");
+    public String getDiscoverySelfTopics() {
+        return environment.getProperty("discovery.self.topics");
     }
 
     /**
@@ -72,7 +72,7 @@ public class ConfigProperties {
      *
      * @return the list of topics we want to subscribe to
      */
-    public List<String> getDiscoveryTopics() throws NullPointerException, IllegalArgumentException {
+    public List<String> getInterestedTopics() {
         String[] topics = environment.getProperty("discovery.topics").split(",");
         return List.of(topics);
     }
@@ -104,14 +104,6 @@ public class ConfigProperties {
         return environment.getProperty("mqtt.topics.executors");
     }
 
-    /**
-     * Retrieves the bids topic address.
-     *
-     * @return the bids topic address
-     */
-    public String getMqttBidsTopic() {
-        return environment.getProperty("mqtt.topics.bids");
-    }
 
     /**
      * Retrieves the name of the group providing this auction house.
@@ -135,7 +127,7 @@ public class ConfigProperties {
      * Retrieves the URI of the TAPAS-Tasks task list of this TAPAS applicatoin. This is used, e.g.,
      * when placing a bid during the auction (see also {@link ch.unisg.tapas.auctionhouse.domain.Bid}).
      *
-     * @return
+     * @return Tasklist URI
      */
     public URI getTaskListUri() {
         return URI.create(environment.getProperty("tasks.list.uri"));

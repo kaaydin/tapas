@@ -1,7 +1,6 @@
 package ch.unisg.tapasexecutorpool.executorpool.domain;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.UUID;
 

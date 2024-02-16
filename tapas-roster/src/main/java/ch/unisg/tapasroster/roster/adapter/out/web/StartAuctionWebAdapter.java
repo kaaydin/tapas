@@ -19,7 +19,6 @@ public class StartAuctionWebAdapter implements StartAuctionPort {
         this.environment = environment;
     }
 
-
     @Override
     public void startAuction(String taskUri, String taskType) {
         AuctionJsonRepresentation auctionJsonRepresentation = new AuctionJsonRepresentation(
@@ -39,8 +38,8 @@ public class StartAuctionWebAdapter implements StartAuctionPort {
                 .body(Mono.just(auctionJsonRepresentation), AuctionJsonRepresentation.class)
                 .retrieve()
                 .toBodilessEntity()
-                .doOnSuccess(response -> LOG.info(String.format("Created new auction for the task " + auctionJsonRepresentation.getTaskUri(), response.toString())))
-                .doOnError(err -> LOG.severe(String.format("Launching an auction for task %s failed with the following reason: " + auctionJsonRepresentation.getTaskUri(), err.getMessage())))  // NOTE: further actions could be taken here)
+                .doOnSuccess(response -> LOG.info(String.format("Created new auction for the task " + auctionJsonRepresentation.getTaskUri())))
+                .doOnError(err -> LOG.severe(String.format("Launching an auction for task %s failed with the following reason: " + err.getMessage(), auctionJsonRepresentation.getTaskUri())))
                 .onErrorComplete()
                 .subscribe();
     }

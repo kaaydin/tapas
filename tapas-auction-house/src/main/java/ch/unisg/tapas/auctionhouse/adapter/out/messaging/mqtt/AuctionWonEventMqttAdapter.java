@@ -34,13 +34,12 @@ public class AuctionWonEventMqttAdapter implements AuctionWonEventPort {
                 .getInstance()
                 .getAuctionById(winningBid.getAuctionId());
 
-            LOGGER.info(String.format("After try function"));
+            LOGGER.info("After try function");
             LOGGER.info(String.format(auction.getTaskUri().getValue().toString()));
             LOGGER.info(String.format(winningBid.getTaskListUri().getValue().toString()));
-            LOGGER.info(String.format(auction.getTaskType().getValue().toString()));
+            LOGGER.info(auction.getTaskType().getValue());
             LOGGER.info(String.format(auction.getAuctionHouseUri().getValue().toString()));
 
-            // TODO: test if works
             notifyTaskList(auction.getTaskUri(), winningBid, auction.getTaskType(), auction.getAuctionHouseUri());
         } catch (AuctionNotFoundError e) {
             LOGGER.error(e.getMessage(), e);
@@ -55,16 +54,15 @@ public class AuctionWonEventMqttAdapter implements AuctionWonEventPort {
         JSONObject jsonRequestBody = new JSONObject();
         jsonRequestBody.put("taskName", auctionHouseUri.getValue().toString());
         jsonRequestBody.put("originalTaskUri", taskUri.getValue().toString());
-        jsonRequestBody.put("taskType", taskType.getValue().toString());
+        jsonRequestBody.put("taskType", taskType.getValue());
         jsonRequestBody.put("inputData", inputData);
         // Output the JSON string
         String requestBody = jsonRequestBody.toString();
-        System.out.println(requestBody);
 
         String externalTaskListUri = winningBid.getTaskListUri().getValue().toString();
 
-        System.out.println("Request Body to " + requestBody);
-        System.out.println("Request Body to " + requestBody.toString());
+        LOGGER.info("Request Body to " + requestBody);
+        LOGGER.info("Request Body to " + requestBody);
 
         WebClient.create()
             .post()
@@ -74,8 +72,8 @@ public class AuctionWonEventMqttAdapter implements AuctionWonEventPort {
             .retrieve()
             .bodyToMono(String.class) // or another class as per your response
             .subscribe(
-                response -> System.out.println("Response: " + response), // Handle successful response
-                error -> System.out.println("Error occurred: " + error.getMessage()) // Handle error
+                response -> LOGGER.info("Response: " + response), // Handle successful response
+                error -> LOGGER.info("Error occurred: " + error.getMessage()) // Handle error
             );
     }
 
@@ -85,8 +83,8 @@ public class AuctionWonEventMqttAdapter implements AuctionWonEventPort {
         try {
             result = restTemplate.getForObject(taskLocation,String.class);
         } catch (RestClientException e){
-            System.out.println("Failed to get the Object on URL: " + taskLocation);
-            System.out.println(e.getMessage());
+            LOGGER.info("Failed to get the Object on URL: " + taskLocation);
+            LOGGER.info(e.getMessage());
             throw e;
         }
 

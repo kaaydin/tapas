@@ -7,8 +7,9 @@ import ch.unisg.tapasexecutorpool.executorpool.domain.ExecutorPool;
 import ch.unisg.tapasexecutorpool.executorpool.domain.ExecutorNotFoundError;
 import ch.unisg.tapasexecutorpool.executorpool.application.port.out.LoadExecutorPort;
 
-
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("RetrieveExecutorFromExecutorPool")
 public class RetrieveExecutorFromExecutorPoolService implements RetrieveExecutorFromExecutorPoolUseCase {
     private final LoadExecutorPort loadExecutorFromRepositoryPort;
+    private static final Logger LOGGER = LogManager.getLogger(RetrieveExecutorFromExecutorPoolService.class);
 
     @Override
     public Executor retrieveExecutorFromExecutorPool(RetrieveExecutorFromExecutorPoolQuery query) throws ExecutorNotFoundError {
@@ -26,7 +28,13 @@ public class RetrieveExecutorFromExecutorPoolService implements RetrieveExecutor
             Executor executor = executorPool.retrieveExecutorById(query.getExecutorId());
             return executor;
         } catch (ExecutorNotFoundError e) {
-            return loadExecutorFromRepositoryPort.loadExecutor(query.getExecutorId());
+            LOGGER.info("No Executor found in cache, so try database");
+            Executor executor = loadExecutorFromRepositoryPort.loadExecutor(query.getExecutorId());
+            if(executor!=null){
+                return executor;
+            }else{
+                throw new ExecutorNotFoundError();
+            }
         }
     }
 }

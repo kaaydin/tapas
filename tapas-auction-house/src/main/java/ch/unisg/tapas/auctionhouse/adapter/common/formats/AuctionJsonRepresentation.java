@@ -13,8 +13,6 @@ import java.net.URI;
 /**
  * Used to expose a representation of the state of an auction through an interface.
  *
- * TODO: This class is only meant as a starting point when defining a uniform HTTP API for the
- * Auction House. You should modify this class as you see fit!
  */
 public class AuctionJsonRepresentation {
     public static final String MEDIA_TYPE = "application/json";

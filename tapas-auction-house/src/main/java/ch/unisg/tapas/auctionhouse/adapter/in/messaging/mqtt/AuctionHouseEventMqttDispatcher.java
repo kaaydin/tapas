@@ -1,16 +1,9 @@
 package ch.unisg.tapas.auctionhouse.adapter.in.messaging.mqtt;
 
-import ch.unisg.tapas.auctionhouse.domain.AuctionRegistry;
-import ch.unisg.tapas.auctionhouse.domain.AuctionStartedEvent;
 import ch.unisg.tapas.common.ConfigProperties;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import ch.unisg.tapas.auctionhouse.domain.Auction;
-import org.springframework.beans.factory.annotation.Autowired;
-import ch.unisg.tapas.auctionhouse.domain.Auction;
-
 
 import java.util.Hashtable;
 import java.util.Map;
@@ -34,13 +27,10 @@ public class AuctionHouseEventMqttDispatcher {
     private final ConfigProperties config;
     private final Map<String, AuctionHouseEventMqttListener> router;
     private final ExecutorAddedEventListenerMqttAdapter executorAddedEventListenerMqttAdapter;
-    //private final BidsEventListenerMqttAdapter bidsEventListenerMqttAdapter;
 
     public AuctionHouseEventMqttDispatcher(ConfigProperties config, ExecutorAddedEventListenerMqttAdapter executorAddedEventListenerMqttAdapter) {
-        //BidsEventListenerMqttAdapter bidsEventListenerMqttAdapter
         this.config = config;
         this.executorAddedEventListenerMqttAdapter = executorAddedEventListenerMqttAdapter;
-        //this.bidsEventListenerMqttAdapter = bidsEventListenerMqttAdapter;
         this.router = new Hashtable<>();
 
 
@@ -49,15 +39,10 @@ public class AuctionHouseEventMqttDispatcher {
 
     public void registerTopicAndListener(String topic, AuctionHouseEventMqttListener listener) {
         router.put(topic, listener);
-        //router.put(topic, bidsEventListenerMqttAdapter);
-        //router.put(topic, bidsEventListenerMqttAdapter);
-        System.out.println("Topic: " + topic);
-
     }
 
     private void initRouter() {
         router.put(config.getMqttExecutorsTopic(), executorAddedEventListenerMqttAdapter);
-        System.out.println("Executor topic: " + config.getMqttExecutorsTopic());
     }
     /**
      * Returns all topics registered with this dispatcher.

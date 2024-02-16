@@ -3,7 +3,6 @@ package ch.unisg.tapas.auctionhouse.adapter.out.messaging.mqtt;
 import ch.unisg.tapas.auctionhouse.adapter.common.clients.TapasMqttClient;
 import ch.unisg.tapas.auctionhouse.adapter.in.messaging.mqtt.AuctionHouseEventMqttDispatcher;
 import ch.unisg.tapas.auctionhouse.adapter.in.messaging.mqtt.AuctionStartedEventListenerMqttAdapter;
-import ch.unisg.tapas.auctionhouse.adapter.in.messaging.mqtt.BidsEventListenerMqttAdapter;
 import ch.unisg.tapas.auctionhouse.application.port.out.feeds.SubscribeToAuctionFeedPort;
 import ch.unisg.tapas.auctionhouse.domain.Auction;
 import ch.unisg.tapas.common.ConfigProperties;
@@ -34,7 +33,6 @@ public class SubscribeToAuctionFeedMqttAdapter implements SubscribeToAuctionFeed
         LOGGER.info("Subscribing to auction feed via MQTT: " + feedId.getValue());
 
         dispatcher.registerTopicAndListener(feedId.getValue(), auctionStartedEventListenerMqttAdapter);
-        //dispatcher.registerTopicAndListener(feedId.getValue(), bidsListener);
         TapasMqttClient mqttClient = TapasMqttClient.getInstance(config.getMqttBrokerAddress(), dispatcher);
 
         try {

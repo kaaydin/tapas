@@ -3,7 +3,6 @@ package ch.unisg.tapas.auctionhouse.domain;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**

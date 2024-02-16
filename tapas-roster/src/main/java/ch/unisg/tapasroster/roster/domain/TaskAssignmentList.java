@@ -2,12 +2,15 @@ package ch.unisg.tapasroster.roster.domain;
 
 import lombok.Getter;
 import lombok.Value;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.LinkedList;
 import java.util.List;
 
 /**This is our aggregate root**/
 public class TaskAssignmentList {
+    private static final Logger LOGGER = LogManager.getLogger(TaskAssignmentList.class);
 
     @Getter
     private final TaskAssignmentListName taskAssignmentListName;
@@ -31,11 +34,10 @@ public class TaskAssignmentList {
         return listOfAssignments;
     }
 
-
     public void addNewAssignment(TaskAssignment newAssignment) {
         listOfTaskAssignments.value.add(newAssignment);
         //This is a simple debug message to see that the task list is growing with each new request
-        System.out.println("Number of assignments: " + listOfTaskAssignments.value.size());
+        LOGGER.info("Number of assignments: " + listOfTaskAssignments.value.size());
     }
 
     @Value

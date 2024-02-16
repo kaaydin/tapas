@@ -8,15 +8,12 @@ import ch.unisg.tapas.auctionhouse.domain.Auction;
 import ch.unisg.tapas.auctionhouse.domain.Bid;
 import ch.unisg.tapas.common.ConfigProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-
-import java.awt.desktop.SystemEventListener;
 
 /**
  * This class is a template for implementing an MQTT adapter that places bid.
@@ -35,13 +32,9 @@ public class PlaceBidForAuctionMqttAdapter implements PlaceBidForAuctionPort {
         LOGGER.info("Sending bid via MQTT");
         TapasMqttClient mqttClient = TapasMqttClient.getInstance(config.getMqttBrokerAddress(), auctionEventsMqttDispatcher);
 
-        System.out.println(auction);
-        System.out.println(bid);
-        System.out.println(auction.getAuctionFeedId().getValue().toString());
-
         try {
             String message = BidJsonRepresentation.serialize(bid);
-            mqttClient.publish(auction.getAuctionFeedId().getValue().toString(), message);
+            mqttClient.publish(auction.getAuctionFeedId().getValue(), message);
         } catch (JsonProcessingException | MqttException e) {
             LOGGER.error(e.getMessage(), e);
         }

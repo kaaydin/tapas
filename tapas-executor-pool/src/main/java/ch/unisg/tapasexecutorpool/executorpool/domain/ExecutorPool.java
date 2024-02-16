@@ -2,12 +2,15 @@ package ch.unisg.tapasexecutorpool.executorpool.domain;
 
 import lombok.Getter;
 import lombok.Value;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.LinkedList;
 import java.util.List;
 
 /**This is our aggregate root**/
 public class ExecutorPool {
+    private static final Logger LOGGER = LogManager.getLogger(ExecutorPool.class);
 
     // Defining all Getters / Setters
     @Getter
@@ -48,7 +51,7 @@ public class ExecutorPool {
 
     private void addExecutorToExecutorPool(Executor newExecutor) {
         listOfExecutors.value.add(newExecutor);
-        System.out.println("Number of Executors: " + listOfExecutors.value.size());
+        LOGGER.info("Number of Executors: " + listOfExecutors.value.size());
     }
 
     public Executor retrieveExecutorById(String id) throws ExecutorNotFoundError {

@@ -34,12 +34,6 @@ public class LaunchAuctionWebController {
 
     /**
      * Handles HTTP POST requests for launching auctions.
-     *
-     * TODO: you are free to modify this handler as you see fit to reflect the discussions for the
-     * uniform HTTP API for the auction house. You should also ensure that this handler has the exact
-     * behavior you would expect from the defined uniform HTTP API (status codes, returned payload,
-     * HTTP headers, etc.).
-     *
      * @param payload a representation of the auction to be launched
      * @return HTTP response
      */
@@ -62,8 +56,6 @@ public class LaunchAuctionWebController {
         Auction.AuctionId auctionId = launchAuctionUseCase.launchAuction(command);
         new Auction.AuctionFeedId("ch/unisg/tapas/auctions/group5/" + auctionId.getValue());
         LOGGER.info("Launched auction with identifier " + auctionId.getValue());
-        System.out.print("Launched auction with identifier " + auctionId.getValue());
-
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.add(HttpHeaders.LOCATION, config.getAuctionHouseUri()

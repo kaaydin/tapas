@@ -30,8 +30,6 @@ public class ExecutorAddedEventListenerMqttAdapter implements AuctionHouseEventM
         String payload = new String(message.getPayload());
 
         try {
-            // Note: this message representation is provided only as an example. You should use a
-            // representation that makes sense in the context of your application.
             JsonNode data = new ObjectMapper().readTree(payload);
 
             String taskType = data.get("taskType").asText();

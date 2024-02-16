@@ -2,14 +2,15 @@ package ch.unisg.tapastasks.tasks.domain;
 
 import lombok.Getter;
 import lombok.Value;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
-
 
 /**This is our aggregate root**/
 public class TaskList {
+    private static final Logger LOGGER = LogManager.getLogger(TaskList.class);
 
     @Getter
     private final TaskListName taskListName;
@@ -19,7 +20,6 @@ public class TaskList {
 
     //Note: We do not care about the management of task lists, there is only one within this service
     //--> using the Singleton pattern here to make lives easy; we will later load it from a repo
-    //TODO: change "tutors" to your group name ("groupx")
     private static final TaskList taskList = new TaskList(new TaskListName("tapas-tasks-group5"));
 
     private TaskList(TaskListName taskListName) {
@@ -58,7 +58,7 @@ public class TaskList {
         //domain event publisher and subscribers (see "Implementing Domain-Driven Design by V. Vernon, pp. 296ff).
         listOfTasks.value.add(newTask);
         //This is a simple debug message to see that the task list is growing with each new request
-        System.out.println("Number of tasks: " + listOfTasks.value.size());
+        LOGGER.info("Number of tasks: " + listOfTasks.value.size());
     }
 
     public Task retrieveTaskById(Task.TaskId id)

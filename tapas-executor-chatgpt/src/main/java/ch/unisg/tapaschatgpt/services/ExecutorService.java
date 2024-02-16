@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ch.unisg.tapaschatgpt.ChatGPTExecutor;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
 
 @Service
 public class ExecutorService {
@@ -14,7 +17,7 @@ public class ExecutorService {
     @Autowired
     private StatusService statusService;
 
-    public Task executeTask(Task task) {
+    public Task executeTask(Task task) throws ExecutionException, InterruptedException {
         // publish task started
         statusService.publishTaskStartedEvent(task.getTaskLocation());
 
@@ -24,17 +27,17 @@ public class ExecutorService {
         }
 
         // execute task
-        Task completedTask = executor.executeTask(task);
+        CompletableFuture<Task> completedTask = executor.executeTask(task);
 
         // publish task completed for shadow task
-        statusService.publishTaskStatusEvent(task.getTaskLocation(), Task.Status.EXECUTED, task.getOutput());
+        statusService.publishTaskStatusEvent(completedTask.get().getTaskLocation(), Task.Status.EXECUTED, completedTask.get().getOutput());
 
         // publish task completed for original task
         if (task.getOriginalTaskUri() != null) {
-            statusService.publishTaskStatusEvent(task.getOriginalTaskUri(), Task.Status.EXECUTED, task.getOutput());
+            statusService.publishTaskStatusEvent(completedTask.get().getOriginalTaskUri(), Task.Status.EXECUTED, completedTask.get().getOutput());
         }
 
-        return completedTask;
+        return completedTask.get();
     }
 
 }

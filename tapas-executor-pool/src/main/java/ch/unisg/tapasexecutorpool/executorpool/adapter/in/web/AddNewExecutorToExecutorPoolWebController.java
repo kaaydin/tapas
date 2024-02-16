@@ -31,20 +31,19 @@ public class AddNewExecutorToExecutorPoolWebController {
 
     @PostMapping(path = "/executors/", consumes = {ExecutorJsonRepresentation.MEDIA_TYPE})
     public ResponseEntity<Void> addNewExecutorExecutorToExecutorPool(@RequestBody ExecutorJsonRepresentation payload) {
+        String executorName = payload.getExecutorName();
+        String executorType = payload.getExecutorType();
+        String executorBaseUri = payload.getExecutorBaseUri();
+
+        AddNewExecutorToExecutorPoolCommand command = new AddNewExecutorToExecutorPoolCommand(executorName, executorType, executorBaseUri);
         try {
-            String executorName = payload.getExecutorName();
-            String executorType = payload.getExecutorType();
-            String executorBaseUri = payload.getExecutorBaseUri();
-
-            AddNewExecutorToExecutorPoolCommand command = new AddNewExecutorToExecutorPoolCommand(executorName, executorType, executorBaseUri);
-
             String executorId = addNewExecutorToExecutorPoolUseCase.addNewExecutorToExecutorPool(command);
 
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.add(HttpHeaders.LOCATION, environment.getProperty("baseuri")
                     + "executors/" + executorId);
 
-            return new ResponseEntity<Void>(responseHeaders, HttpStatus.CREATED);
+            return new ResponseEntity<>(responseHeaders, HttpStatus.CREATED);
         } catch (ConstraintViolationException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }

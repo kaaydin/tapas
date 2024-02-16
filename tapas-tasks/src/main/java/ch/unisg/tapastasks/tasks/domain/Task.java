@@ -3,11 +3,15 @@ package ch.unisg.tapastasks.tasks.domain;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Value;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.UUID;
 
 /**This is a domain entity**/
 public class Task {
+    private static final Logger LOGGER = LogManager.getLogger(Task.class);
+
     public enum Status {
         OPEN, ASSIGNED, RUNNING, EXECUTED
     }
@@ -60,13 +64,13 @@ public class Task {
 
     public static Task createTaskWithNameAndType(TaskName name, TaskType type) {
         //This is a simple debug message to see that the request has reached the right method in the core
-        System.out.println("New Task: " + name.getValue() + " " + type.getValue());
+        LOGGER.info("New Task: " + name.getValue() + " " + type.getValue());
         return new Task(name, type, null);
     }
 
     public static Task createTaskWithNameAndTypeAndInput(TaskName name, TaskType type, InputData input) {
         //This is a simple debug message to see that the request has reached the right method in the core
-        System.out.println("New Task: " + name.getValue() + " " + type.getValue());
+        LOGGER.info("New Task: " + name.getValue() + " " + type.getValue());
         return new Task(name, type, input);
     }
 

@@ -80,6 +80,42 @@ services:
     networks:
       - tapas-network
 
+  tapas-executor-cherrybot:
+    build:
+      context: ./tapas-executor-cherrybot
+      dockerfile: Dockerfile-local
+    # Use environment variables instead of application.properties
+    environment:
+      - KEY=VALUE
+    ports: #Just needed when testing from outside
+      - "8086:8086"
+    networks:
+      - tapas-network
+
+  tapas-executor-mirocard:
+    build:
+      context: ./tapas-executor-mirocard
+      dockerfile: Dockerfile-local
+    # Use environment variables instead of application.properties
+    environment:
+      - KEY=VALUE
+    ports: #Just needed when testing from outside
+      - "8087:8087"
+    networks:
+      - tapas-network
+
+  tapas-executor-masonsmanifesto:
+    build:
+      context: ./tapas-executor-masonsmanifesto
+      dockerfile: Dockerfile-local
+    # Use environment variables instead of application.properties
+    environment:
+      - KEY=VALUE
+    ports: #Just needed when testing from outside
+      - "8088:8088"
+    networks:
+      - tapas-network
+
   tapas-auction-house:
     build:
       context: ./tapas-auction-house

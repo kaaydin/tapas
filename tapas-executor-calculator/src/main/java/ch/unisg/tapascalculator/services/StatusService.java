@@ -1,6 +1,8 @@
 package ch.unisg.tapascalculator.services;
 
 import ch.unisg.tapascalculator.domain.Task;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
@@ -12,12 +14,13 @@ import java.net.http.HttpResponse;
 
 @Service
 public class StatusService {
+    private static final Logger LOGGER = LogManager.getLogger(StatusService.class);
 
     public void publishTaskStartedEvent(String taskLocation) {
         publishTaskStatusEvent(taskLocation, Task.Status.RUNNING, null);
     }
     public void publishTaskStatusEvent(String taskLocation, String taskStatus, @Nullable String output) {
-        System.out.println("Status " + output);
+        LOGGER.info("Status " + output);
 
         String patch = "[\n { \"op\": \"replace\", \"path\": \"/taskStatus\", \"value\": \"" + taskStatus + "\" }";
 
@@ -32,12 +35,12 @@ public class StatusService {
                 .uri(URI.create(taskLocation))
                 .method("PATCH", HttpRequest.BodyPublishers.ofString(patch))
                 .build();
-        System.out.println("Payload Out: " + patch);
+        LOGGER.info("Payload Out: " + patch);
 
         // Needs the other service running
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.body());
+            LOGGER.info(response.body());
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }

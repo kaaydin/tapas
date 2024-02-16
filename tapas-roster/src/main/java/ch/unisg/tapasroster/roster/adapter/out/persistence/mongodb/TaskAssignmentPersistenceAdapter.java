@@ -22,7 +22,6 @@ public class TaskAssignmentPersistenceAdapter implements AddTaskAssignmentPort, 
     public void addTaskAssignment(TaskAssignment taskAssignment) {
         MongoTaskAssignmentDocument mongoTaskAssignmentDocument = mapper.mapToMongoDocument(taskAssignment);
         repository.save(mongoTaskAssignmentDocument);
-        System.out.println(mongoTaskAssignmentDocument);
     }
 
     @Override
