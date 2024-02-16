@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 public class ChatGPTExecutor implements ExecutionUseCase {
     private static final Logger LOGGER = LogManager.getLogger(ChatGPTExecutor.class);
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
-    private static final String API_KEY = "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";
+    private static final String API_KEY = "";
     private static final String MODEL = "gpt-3.5-turbo";
 
     @Override
